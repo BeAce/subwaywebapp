@@ -58,31 +58,31 @@ angular.module('starter.services', [])
     headPortrait : 'img/subway.png',
     msgText : '地铁新消息0',
     msgTextEn: 'The News 0',
-    msgImg : 'img/ben.png'   
+    msgImg : 'img/adam.jpg'
   },{
     id: 1,
     name : 'Stationmaster',
     headPortrait : 'img/subway.png',
     msgText : '地铁新消息1',
      msgTextEn: 'The News 1',
-    msgImg : 'img/ben.png'   
+    msgImg : 'img/ben.png'
   },{
     id: 2,
     name : 'Stationmaster',
     headPortrait : 'img/subway.png',
     msgText : '地铁新消息2',
     msgTextEn: 'The News 2',
-    msgImg : 'img/ben.png'   
+    msgImg : 'img/perry.png'
   }];
 
   return {
     all : function() {
       return chats;
     },
-    remove : function(news) {
+    remove : function(chat) {
       chats.splice(chats.indexOf(chat), 1);
     },
-    get: function(newsId) {
+    get: function(chatId) {
       for(var i = 0; i < chats.length; i++) {
         if(chats[i].id === parseInt(chatId)){
           return chats[i];
