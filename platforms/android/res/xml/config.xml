@@ -38,12 +38,12 @@
     <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png" />
     <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
     <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
-    <name>HelloCordova</name>
+    <name>SubWay</name>
     <description>
-        An Ionic Framework and Cordova project.
+        A tool for searching route.
     </description>
-    <author email="you@example.com" href="http://example.com.com/">
-      Your Name Here
+    <author email="1254155232@qq.com" href="https://beacelee.com">
+      Beace
     </author>
     <content src="index.html" />
     <access origin="*" />
