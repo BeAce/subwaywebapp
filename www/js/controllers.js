@@ -2037,7 +2037,7 @@ angular.module('starter.controllers', [])
     // }
 
     // 百度地图API功能
-    $('.lbs-logo').css('display', 'none')
+    // $('.lbs-logo').css('display', 'none');
 })
 
 
