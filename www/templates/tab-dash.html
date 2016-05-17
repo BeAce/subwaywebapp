@@ -21,46 +21,37 @@
     <div class="list padding">
         <label class="item item-input item-select">
           <div class="input-label">选择按线路查询</div>
-          <select>
-            <option>1号线</option>
-            <option>2号线</option>
-            <option>3号线</option>
-            <option>4号线</option>
-            <option>5号线</option>
-            <option>6号线</option>
-            <option>7号线</option>
-            <option>8号线</option>
-            <option>9号线</option>
-            <option>10号线</option>
-            <option>11号线</option>
-            <option>12号线</option>
-            <option>13号线</option>
-            <option>16号线</option>
+          <select name="lines" id="lines" ng-model="selectLines" ng-options="data.subName for data in dataset" ng-change="selectStations=''">
+            <option value="">--选择地铁线--</option>
           </select>
+          
         </label>
-        <label class="item item-input">
+        <label class="item item-input item-select animate-show" ng-show="selectLines">
+          <div class="input-label">选择站点</div>
+            <select name="stations" id="stations" ng-model="selectStations" ng-options="subStation.staName for subStation in selectLines.subStation">
+                <option value="">--选择出发站点--</option>
+            </select>
+           
+        </label>
+        <label class="item item-input" ng-hide="selectLines">
             <input type="text" placeholder="出发地" id="start" name="start">
         </label>
+
+
         <label class="item item-input item-select">
           <div class="input-label">选择按线路查询</div>
-          <select>
-            <option>1号线</option>
-            <option>2号线</option>
-            <option>3号线</option>
-            <option>4号线</option>
-            <option>5号线</option>
-            <option>6号线</option>
-            <option>7号线</option>
-            <option>8号线</option>
-            <option>9号线</option>
-            <option>10号线</option>
-            <option>11号线</option>
-            <option>12号线</option>
-            <option>13号线</option>
-            <option>16号线</option>
+          <select name="lines" id="lines" ng-model="selectLines2" ng-options="data.subName for data in dataset" ng-change="staNames">
+            <option value="">--选择地铁线--</option>
           </select>
         </label>
-        <label class="item item-input">
+        <label class="item item-input item-select animate-show" ng-show="selectLines2">
+          <div class="input-label">选择站点</div>
+            <select name="stations" id="stations" ng-model="selectStations" ng-options="subStation.staName for subStation in selectLines2.subStation" >
+                <option value="">--选择终点站点--</option>
+            </select>
+           
+        </label>
+        <label class="item item-input" ng-hide="selectLines2">
             <input type="text" placeholder="目的地" id="end" name="end">
         </label>
         <button class="button button-block button-royal" ng-click="openModal(dataset)">查询</button>
@@ -68,7 +59,7 @@
         <script id="my-modal.html" type="text/ng-template">
               <ion-modal-view>
                 <ion-header-bar class="bar bar-royal">
-                     <h1 class="title">系统为您搜索到<span>3</span>条路线：</h1>
+                     <h1 class="title">系统为您搜索到如下路线：</h1>
                      <button class="button button-clear" ng-click="closeModal()">Close</button>
                 </ion-header-bar>
                 <ion-content>

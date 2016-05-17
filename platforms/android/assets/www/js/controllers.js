@@ -8,6 +8,7 @@ angular.module('starter.controllers', [])
         $scope.modal = modal;
 
     });
+    
     $scope.openModal = function(dataset) {
         var start = document.getElementById('start').value, //获取用户输入的初始站值
             end = document.getElementById('end').value; //获取用户输入的终点站值
@@ -47,180 +48,185 @@ angular.module('starter.controllers', [])
 
         // 判断是否在同一条线路
         isSingleLine(dataStart, dataEnd, subStationStartIndex, subStationEndIndex, shortPath);
-        console.log('----------最终生成的最短路线-----------');
-        console.log(shortPath);
+        // console.log('----------最终生成的最短路线-----------');
+        // console.log(shortPath);
 
 
         // console.log(dataEnd[i].subStation[j].staName);
         // console.log(dataEnd[i].subStation[j].staName);
         // 需要换乘才能到达
         // 找出初始站的所在线路的所有索引
-        for (var i = 0; i < dataStart.length; i++) {
-            for (var o = 0; o < dataStart[i].subStation.length; o++) {
-                if (start == dataStart[i].subStation[o].staName) {
-                    subStationStartIndex2.push({
-                        id: dataStart[i].id,
-                        subStation: dataStart[i].subStation[o]
-                    });
-                }
-            }
-        }
-        console.log('----------初始站在该线路中的信息-----------');
-        console.log(subStationStartIndex2);
-
-        // // 找出终点站所在线路的所有索引
-        for (var j = 0; j < dataEnd.length; j++) {
-            for (var n = 0; n < dataEnd[j].subStation.length; n++) {
-                if (end == dataEnd[j].subStation[n].staName) {
-                    subStationEndIndex2.push({
-                        id: dataEnd[j].id,
-                        subStation: dataEnd[j].subStation[n]
-                    });
-                }
-            }
-        }
-
-        console.log('----------终点站站在所有换乘站线路中的信息-----------');
-        console.log(subStationEndIndex2);
-
-        for (var i = 0; i < dataStart.length; i++) {
-            for (var j = 0; j < dataEnd.length; j++) {
-                for (var k = 0; k < dataStart[i].subStation.length; k++) {
-                    if (dataStart[i].subStation[k].transfer) {
-                        for (var h = 0; h < dataStart[i].subStation[k].transfer.length; h++) {
-                            if (dataStart[i].subStation[k].transfer[h] && dataStart[i].subStation[k].transfer[h] == dataEnd[j].id) {
-                                isSubStaionTransfer.push({
-                                    id: dataStart[i].id,
-                                    subStation: {
-                                        staId: dataStart[i].subStation[k].staId,
-                                        staName: dataStart[i].subStation[k].staName,
-                                        staWay: dataStart[i].subStation[k].staWay,
-                                        transfer: dataStart[i].subStation[k].transfer[h]
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        var dataStartTransferStation = [];
-        var isTransfer = [];
-        for (var i = 0; i < subStationEndIndex2.length; i++) {
-            for (var j = 0; j < dataStart.length; j++) {
-                for (var k = 0; k < dataStart[j].subStation.length; k++) {
-                    if (dataStart[j].subStation[k].transfer) {
-                        for (var m = 0; m < dataStart[j].subStation[k].transfer.length; m++) {
-                            if (subStationEndIndex2[i].id == dataStart[j].subStation[k].transfer[m]) {
-                                dataStartTransferStation.push({
-                                    transferId: dataStart[j].subStation[k].transfer[m],
-                                    staId: dataStart[j].subStation[k].staId,
-                                    staName: dataStart[j].subStation[k].staName
-                                });
-                                isTransfer.push(dataStart[j].subStation[k].staName);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        console.log(isTransfer);
-        console.log('---------------');
-        console.log(dataStartTransferStation);
-        var halfPath = [];
-        //开始找路线 包括换乘
-        for (var n = 0; n < dataStartTransferStation.length; n++) {
-            halfPath[n] = [];
-            // console.log('线路'+(n+1));
-            for (var m = 0; m < subStationStartIndex2.length; m++) {
-                for (var i = 0; i < dataStart.length; i++) {
-                    for (var j = subStationStartIndex2[m].subStation.staId - 1; j < dataStartTransferStation[n].staId; j++) {
-                        console.log(dataStart[i].subStation[j].staName);
-                        halfPath[n].push({
-                            id: dataEnd[i].id,
-                            staName: dataStart[i].subStation[j].staName,
-                            transferId: dataStartTransferStation[n].transferId
-                        });
-                    }
-                }
-            }
-            console.log('换乘' + dataStartTransferStation[n].transferId + '号线');
-        }
-
-        console.log(halfPath);
-
-        var tranfserItem = [];
-        for (var i = 0; i < halfPath.length; i++) {
-            tranfserItem.push(halfPath[i][halfPath[i].length - 1]);
-        }
-        console.log(tranfserItem);
-
-        var staIdPath = [];
-        for (var k = 0; k < tranfserItem.length; k++) {
-            for (var i = 0; i < dataEnd.length; i++) {
-                for (var j = 0; j < dataEnd[i].subStation.length; j++) {
-                    if (tranfserItem[k].staName == dataEnd[i].subStation[j].staName && tranfserItem[k].transferId == dataEnd[i].id) {
-                        staIdPath.push({
-                            staId: dataEnd[i].subStation[j].staId,
-                            transferId: dataEnd[i].id
-                        });
-                    }
-                }
-            }
-        }
-        // var staIdPath = uniqueArray(staIdPath);
-
-        console.log(staIdPath);
-        var anotherHalfPath = [];
-        for (var k = 0; k < staIdPath.length; k++) {
-            console.log('第' + (k + 1));
-            anotherHalfPath[k] = [];
-            for (var i = 0; i < dataEnd.length; i++) {
-                if (staIdPath[k].transferId == dataEnd[i].id) {
-                    for (var m = 0; m < subStationEndIndex2.length; m++) {
-                        if (subStationEndIndex2[m].id == staIdPath[k].transferId) {
-                            var finalId = subStationEndIndex2[m].subStation.staId;
-                        }
-                    }
-                    if (staIdPath[k].staId > finalId) {
-                        for (var j = staIdPath[k].staId - 1; j >= finalId - 1; j--) {
-                            console.log(dataEnd[i].subStation[j].staName);
-                            anotherHalfPath[k].push({
-                                id: dataEnd[i].id,
-                                staName: dataEnd[i].subStation[j].staName,
-                                id: dataEnd[i].id
-                            });
-                        }
-                    } else {
-                        for (var j = staIdPath[k].staId - 1; j < finalId; j++) {
-                            console.log(dataEnd[i].subStation[j].staName);
-                            anotherHalfPath[k].push({
-                                id: dataEnd[i].id,
-                                staName: dataEnd[i].subStation[j].staName,
-                                id: dataEnd[i].id
-                            });
-                        }
-                    }
-                }
-            }
-        }
-        console.log(anotherHalfPath);
         var finalPaths = [];
-        for (var i = 0; i < halfPath.length; i++) {
-            finalPaths[i] = [];
-            for (var j = 0; j < anotherHalfPath.length; j++) {
-                if (i == j) {
-                    finalPaths[i] = halfPath[i].concat(anotherHalfPath[j]);
+        function findFinalPath(finalPaths) {
+            for (var i = 0; i < dataStart.length; i++) {
+                for (var o = 0; o < dataStart[i].subStation.length; o++) {
+                    if (start == dataStart[i].subStation[o].staName) {
+                        subStationStartIndex2.push({
+                            id: dataStart[i].id,
+                            subStation: dataStart[i].subStation[o]
+                        });
+                    }
                 }
             }
+            // console.log('----------初始站在该线路中的信息-----------');
+            // console.log(subStationStartIndex2);
+
+            // // 找出终点站所在线路的所有索引
+            for (var j = 0; j < dataEnd.length; j++) {
+                for (var n = 0; n < dataEnd[j].subStation.length; n++) {
+                    if (end == dataEnd[j].subStation[n].staName) {
+                        subStationEndIndex2.push({
+                            id: dataEnd[j].id,
+                            subStation: dataEnd[j].subStation[n]
+                        });
+                    }
+                }
+            }
+
+            // console.log('----------终点站站在所有换乘站线路中的信息-----------');
+            // console.log(subStationEndIndex2);
+
+            for (var i = 0; i < dataStart.length; i++) {
+                for (var j = 0; j < dataEnd.length; j++) {
+                    for (var k = 0; k < dataStart[i].subStation.length; k++) {
+                        if (dataStart[i].subStation[k].transfer) {
+                            for (var h = 0; h < dataStart[i].subStation[k].transfer.length; h++) {
+                                if (dataStart[i].subStation[k].transfer[h] && dataStart[i].subStation[k].transfer[h] == dataEnd[j].id) {
+                                    isSubStaionTransfer.push({
+                                        id: dataStart[i].id,
+                                        subStation: {
+                                            staId: dataStart[i].subStation[k].staId,
+                                            staName: dataStart[i].subStation[k].staName,
+                                            staWay: dataStart[i].subStation[k].staWay,
+                                            transfer: dataStart[i].subStation[k].transfer[h]
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            var dataStartTransferStation = [];
+            var isTransfer = [];
+            for (var i = 0; i < subStationEndIndex2.length; i++) {
+                for (var j = 0; j < dataStart.length; j++) {
+                    for (var k = 0; k < dataStart[j].subStation.length; k++) {
+                        if (dataStart[j].subStation[k].transfer) {
+                            for (var m = 0; m < dataStart[j].subStation[k].transfer.length; m++) {
+                                if (subStationEndIndex2[i].id == dataStart[j].subStation[k].transfer[m]) {
+                                    dataStartTransferStation.push({
+                                        transferId: dataStart[j].subStation[k].transfer[m],
+                                        staId: dataStart[j].subStation[k].staId,
+                                        staName: dataStart[j].subStation[k].staName
+                                    });
+                                    isTransfer.push(dataStart[j].subStation[k].staName);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // console.log(isTransfer);
+            // console.log('---------------');
+            // console.log(dataStartTransferStation);
+            var halfPath = [];
+            //开始找路线 包括换乘
+            for (var n = 0; n < dataStartTransferStation.length; n++) {
+                halfPath[n] = [];
+                // console.log('线路'+(n+1));
+                for (var m = 0; m < subStationStartIndex2.length; m++) {
+                    for (var i = 0; i < dataStart.length; i++) {
+                        for (var j = subStationStartIndex2[m].subStation.staId - 1; j < dataStartTransferStation[n].staId; j++) {
+                            console.log(dataStart[i].subStation[j].staName);
+                            halfPath[n].push({
+                                id: dataStart[i].id,
+                                staName: dataStart[i].subStation[j].staName,
+                                transferId: dataStartTransferStation[n].transferId
+                            });
+                        }
+                    }
+                }
+                // console.log('换乘' + dataStartTransferStation[n].transferId + '号线');
+            }
+
+            console.log(halfPath);
+
+            var tranfserItem = [];
+            for (var i = 0; i < halfPath.length; i++) {
+                tranfserItem.push(halfPath[i][halfPath[i].length - 1]);
+            }
+            console.log(tranfserItem);
+
+            var staIdPath = [];
+            for (var k = 0; k < tranfserItem.length; k++) {
+                for (var i = 0; i < dataEnd.length; i++) {
+                    for (var j = 0; j < dataEnd[i].subStation.length; j++) {
+                        if (tranfserItem[k].staName == dataEnd[i].subStation[j].staName && tranfserItem[k].transferId == dataEnd[i].id) {
+                            staIdPath.push({
+                                staId: dataEnd[i].subStation[j].staId,
+                                transferId: dataEnd[i].id
+                            });
+                        }
+                    }
+                }
+            }
+            // var staIdPath = uniqueArray(staIdPath);
+
+            // console.log(staIdPath);
+            var anotherHalfPath = [];
+            for (var k = 0; k < staIdPath.length; k++) {
+                console.log('第' + (k + 1));
+                anotherHalfPath[k] = [];
+                for (var i = 0; i < dataEnd.length; i++) {
+                    if (staIdPath[k].transferId == dataEnd[i].id) {
+                        for (var m = 0; m < subStationEndIndex2.length; m++) {
+                            if (subStationEndIndex2[m].id == staIdPath[k].transferId) {
+                                var finalId = subStationEndIndex2[m].subStation.staId;
+                            }
+                        }
+                        if (staIdPath[k].staId > finalId) {
+                            for (var j = staIdPath[k].staId - 1; j >= finalId - 1; j--) {
+                                console.log(dataEnd[i].subStation[j].staName);
+                                anotherHalfPath[k].push({
+                                    id: dataEnd[i].id,
+                                    staName: dataEnd[i].subStation[j].staName,
+                                    id: dataEnd[i].id
+                                });
+                            }
+                        } else {
+                            for (var j = staIdPath[k].staId - 1; j < finalId; j++) {
+                                console.log(dataEnd[i].subStation[j].staName);
+                                anotherHalfPath[k].push({
+                                    id: dataEnd[i].id,
+                                    staName: dataEnd[i].subStation[j].staName,
+                                    id: dataEnd[i].id
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            // console.log(anotherHalfPath);
+            
+            for (var i = 0; i < halfPath.length; i++) {
+                finalPaths[i] = [];
+                for (var j = 0; j < anotherHalfPath.length; j++) {
+                    if (i == j) {
+                        finalPaths[i] = halfPath[i].concat(anotherHalfPath[j]);
+                    }
+                }
+            }
+            // console.log('最终的所有路线');
+            // console.log(finalPaths);
         }
-        console.log('最终的所有路线');
-        console.log(finalPaths);
+
 
         if (shortPath.length) {
             consoleShortPath(shortPath, pathInLine);
         } else {
+            findFinalPath(finalPaths);
             consoleFinalPaths(finalPaths);
         }
 
