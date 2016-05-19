@@ -21,14 +21,14 @@
     <div class="list padding">
         <label class="item item-input item-select">
           <div class="input-label">选择按线路查询</div>
-          <select name="lines" id="lines" ng-model="selectLines" ng-options="data.subName for data in dataset" ng-change="selectStations=''">
+          <select name="startLines" id="startLines" ng-model="selectLines" ng-options="data.subName for data in dataset track by data.id" ng-change="selectStations=''">
             <option value="">--选择地铁线--</option>
           </select>
           
         </label>
         <label class="item item-input item-select animate-show" ng-show="selectLines">
           <div class="input-label">选择站点</div>
-            <select name="stations" id="stations" ng-model="selectStations" ng-options="subStation.staName for subStation in selectLines.subStation">
+            <select name="start_stations" id="start_stations" ng-model="selectStations" ng-options="subStation.staName for subStation in selectLines.subStation track by subStation.staId">
                 <option value="">--选择出发站点--</option>
             </select>
            
@@ -40,13 +40,13 @@
 
         <label class="item item-input item-select">
           <div class="input-label">选择按线路查询</div>
-          <select name="lines" id="lines" ng-model="selectLines2" ng-options="data.subName for data in dataset" ng-change="staNames">
+          <select name="endLines" id="endLines" ng-model="selectLines2" ng-options="data.subName for data in dataset track by data.id" ng-change="staNames">
             <option value="">--选择地铁线--</option>
           </select>
         </label>
         <label class="item item-input item-select animate-show" ng-show="selectLines2">
           <div class="input-label">选择站点</div>
-            <select name="stations" id="stations" ng-model="selectStations" ng-options="subStation.staName for subStation in selectLines2.subStation" >
+            <select name="end_stations" id="end_stations" ng-model="selectStations2" ng-options="subStation.staName for subStation in selectLines2.subStation track by subStation.staId" >
                 <option value="">--选择终点站点--</option>
             </select>
            

@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, $ionicModal) {
+.controller('DashCtrl', function($scope, $ionicModal,$ionicPopup,$timeout) {
     $ionicModal.fromTemplateUrl('my-modal.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -8,9 +8,18 @@ angular.module('starter.controllers', [])
         $scope.modal = modal;
 
     });
-    
+    $scope.showAlert = function() {
+        var alertPopup = $ionicPopup.alert({
+            title: '请正确填写站名',
+            template: '请检查站名是否填写，如果填写请确认是否填写正确'
+        });
+        alertPopup.then(function(res) {
+            console.log('Thank you for not eating my delicious ice cream cone');
+        });
+   };
+
     $scope.openModal = function(dataset) {
-        $scope.modal.show();
+        
         var start = document.getElementById('start').value, //获取用户输入的初始站值
             end = document.getElementById('end').value; //获取用户输入的终点站值
         var path = document.getElementById('path');
@@ -36,8 +45,15 @@ angular.module('starter.controllers', [])
             endStationsText = endStations.options[endStationsIndex].text;
             endStationsValue = parseInt(endStations.options[endStationsIndex].value);
         
-        alert(endStationsValue);
+        // alert(endStationsValue);
         
+        // if((!start && !end) || (startLineValue && endStationsValue)) {
+        //     $scope.showAlert();
+        // }
+        if(!start && !end && !startLineValue && !endStationsValue) {
+            $scope.showAlert();
+        }
+
          //查找开始/结束线路存储起来
         var startLineObj = {};
         var endLineObj = {};
@@ -46,6 +62,7 @@ angular.module('starter.controllers', [])
         var anotherHalfSingleLinePath = [];
         var findSingleLinePath = [];
         if (!start || !end) {
+
             if(startLineValue == endLineValue) {
                 for(var i = 0; i < dataset.length; i ++) {
                     if(dataset[i].id == startLineValue) {
@@ -60,12 +77,14 @@ angular.module('starter.controllers', [])
                     console.log('找到相同线路上的车站');
                     console.log(startLineObj);
                     var stationsNum = Math.abs(startStationsValue - endStationsValue);
+                    $scope.modal.show();
                     consoleShortPath(findSingleLinePath,stationsNum);
                 }else{
                     findSingleLinePath = startLineObj.subStation.slice(startStationsValue - 1,endStationsValue - startStationsValue + 1);
                     console.log('找到相同线路上的车站');
                     console.log(startLineObj);
                     var stationsNum = Math.abs(startStationsValue - endStationsValue);
+                    $scope.modal.show();
                     consoleShortPath(findSingleLinePath,stationsNum);
                 }
                 
@@ -145,6 +164,7 @@ angular.module('starter.controllers', [])
                 }
                 console.log(findSingleLinePath);
                 // consoleShortPath(findSingleLinePath,stationsNum);
+                $scope.modal.show();
                 consoleSingleShortPath(findSingleLinePath,stationsNum,endLineValue)
                 function consoleSingleShortPath(findSingleLinePath,stationsNum,endLineValue){  
                     var path = document.getElementById('path');
@@ -388,9 +408,11 @@ angular.module('starter.controllers', [])
 
         if(!startLineValue || !endLineValue) {
             if (shortPath.length) {
+                $scope.modal.show();
                 consoleShortPath(shortPath, pathInLine);
             } else {
                 findFinalPath(finalPaths);
+                $scope.modal.show();
                 consoleFinalPaths(finalPaths);
             }
         }
@@ -808,84 +830,84 @@ angular.module('starter.controllers', [])
             staWay: 0,
             transfer: [4, 11]
         }, {
-            staId: 12,
+            staId: 11,
             staName: '镇坪路',
             staWay: 0,
             transfer: [4, 7]
         }, {
-            staId: 13,
+            staId: 12,
             staName: '中潭路',
             staWay: 0,
             transfer: [4]
         }, {
-            staId: 14,
+            staId: 13,
             staName: '上海火车站',
             staWay: 0,
             transfer: [1, 4]
         }, {
-            staId: 15,
+            staId: 14,
             staName: '宝山路',
             staWay: 0,
             transfer: [4]
         }, {
-            staId: 16,
+            staId: 15,
             staName: '东宝兴路',
             staWay: 0
         }, {
-            staId: 17,
+            staId: 16,
             staName: '虹口足球场',
             staWay: 0,
             transfer: [8]
         }, {
-            staId: 18,
+            staId: 17,
             staName: '赤峰路',
             staWay: 0
         }, {
-            staId: 19,
+            staId: 18,
             staName: '大柏树',
             staWay: 0
         }, {
-            staId: 20,
+            staId: 19,
             staName: '江湾镇',
             staWay: 0
         }, {
-            staId: 21,
+            staId: 20,
             staName: '殷高西路',
             staWay: 0
         }, {
-            staId: 22,
+            staId: 21,
             staName: '长江南路',
             staWay: 0
         }, {
-            staId: 23,
+            staId: 22,
             staName: '淞发路',
             staWay: 0
         }, {
-            staId: 24,
+            staId: 23,
             staName: '张华浜',
             staWay: 0
         }, {
-            staId: 25,
+            staId: 24,
             staName: '淞滨路',
             staWay: 0
         }, {
-            staId: 26,
+            staId: 25,
             staName: '水产路',
             staWay: 0
         }, {
-            staId: 27,
+            staId: 26,
             staName: '宝杨路',
             staWay: 0
         }, {
-            staId: 28,
+            staId: 27,
             staName: '友谊路',
             staWay: 0
         }, {
-            staId: 29,
+            staId: 28,
             staName: '铁力路',
             staWay: 0
         }, {
-            staId: 30,
+            staId: 29,
             staName: '江杨北路',
             staWay: 0
         }]

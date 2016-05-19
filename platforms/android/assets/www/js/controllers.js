@@ -10,13 +10,177 @@ angular.module('starter.controllers', [])
     });
     
     $scope.openModal = function(dataset) {
+        $scope.modal.show();
         var start = document.getElementById('start').value, //获取用户输入的初始站值
             end = document.getElementById('end').value; //获取用户输入的终点站值
+        var path = document.getElementById('path');
+        // 获取用户在下拉框中选择的线路
+        var startLine = document.getElementById('startLines'),
+            startLineIndex = startLine.selectedIndex,
+            startLineText = startLine.options[startLineIndex].text,
+            startLineValue = startLine.options[startLineIndex].value,
+            
+            startStations = document.getElementById('start_stations'),
+            startStationsIndex = startStations.selectedIndex,
+            startStationsText = startStations.options[startStationsIndex].text,
+            startStationsValue = parseInt(startStations.options[startStationsIndex].value),
 
+
+            endLine = document.getElementById('endLines'),
+            endLineIndex = endLine.selectedIndex,
+            endLineText = endLine.options[endLineIndex].text,
+            endLineValue = endLine.options[endLineIndex].value,
+
+            endStations = document.getElementById('end_stations'),
+            endStationsIndex = endStations.selectedIndex,
+            endStationsText = endStations.options[endStationsIndex].text;
+            endStationsValue = parseInt(endStations.options[endStationsIndex].value);
+        
+        alert(endStationsValue);
+        
+         //查找开始/结束线路存储起来
+        var startLineObj = {};
+        var endLineObj = {};
+        var transferSta = [];
+        var halfSingleLinePath = [];
+        var anotherHalfSingleLinePath = [];
+        var findSingleLinePath = [];
         if (!start || !end) {
-            return false;
+            if(startLineValue == endLineValue) {
+                for(var i = 0; i < dataset.length; i ++) {
+                    if(dataset[i].id == startLineValue) {
+                        startLineObj= dataset[i];
+                        console.log(dataset[i]);
+                    }
+                }
+                console.log(startStationsValue + ' ' + endStationsValue );
+                if(startStationsValue > endStationsValue) {
+                    
+                    findSingleLinePath = startLineObj.subStation.slice(endStationsValue - 1,startStationsValue - endStationsValue + 1).reverse();
+                    console.log('找到相同线路上的车站');
+                    console.log(startLineObj);
+                    var stationsNum = Math.abs(startStationsValue - endStationsValue);
+                    consoleShortPath(findSingleLinePath,stationsNum);
+                }else{
+                    findSingleLinePath = startLineObj.subStation.slice(startStationsValue - 1,endStationsValue - startStationsValue + 1);
+                    console.log('找到相同线路上的车站');
+                    console.log(startLineObj);
+                    var stationsNum = Math.abs(startStationsValue - endStationsValue);
+                    consoleShortPath(findSingleLinePath,stationsNum);
+                }
+                
+            }else{
+                var stationsNum = 0;
+                for(var i = 0; i < dataset.length; i ++) {
+                    if(dataset[i].id == startLineValue) {
+                        startLineObj = dataset[i];
+                    }else if(dataset[i].id == endLineValue) {
+                        endLineObj = dataset[i];
+                    }
+                }
+                for(var j = 0; j < startLineObj.subStation.length; j ++) {
+                    if(startLineObj.subStation[j].transfer){
+                        for(var k = 0; k < startLineObj.subStation[j].transfer.length; k ++) {
+                            if(startLineObj.subStation[j].transfer[k] == endLineValue) {
+                                transferSta.push({
+                                    staId:startLineObj.subStation[j].staId,
+                                    staName:startLineObj.subStation[j].staName,
+                                    transfer:startLineObj.subStation[j].transfer[k]
+                                })
+                            }
+                        }
+                    }
+                    
+                }
+                console.log(transferSta);
+                for(var i = 0; i < transferSta.length; i ++) {
+                    // console.log(transferSta[i].staId);
+                    // findSingleLinePath[i] = [];
+                    if(startStationsValue > transferSta[i].staId) {
+                        halfSingleLinePath.push(startLineObj.subStation.slice(transferSta[i].staId - 1 ,startStationsValue).reverse());
+                        // console.log(halfSingleLinePath);
+                        stationsNum = Math.abs(startStationsValue - transferSta[i].staId);
+                        // console.log(stationsNum);
+                        
+                    }else{
+                        halfSingleLinePath.push(startLineObj.subStation.slice(startStationsValue - 1,transferSta[i].staId));
+                        // console.log(halfSingleLinePath);
+                        stationsNum = Math.abs(startStationsValue - transferSta[i].staId);
+                        // console.log(stationsNum);
+                    }
+                }
+
+                var anotherIndex = [];
+                for(var i = 0; i < transferSta.length; i ++) {
+                    for(var j = 0;j < endLineObj.subStation.length;j++) {
+                        if(endLineObj.subStation[j].staName == transferSta[i].staName) {
+                            anotherIndex.push(endLineObj.subStation[j]);
+                        }
+                    }
+                }
+                console.log(anotherIndex);
+
+                for(var i = 0; i < anotherIndex.length; i ++) {
+                    if(anotherIndex[i].staId > endStationsValue) {
+                        anotherHalfSingleLinePath.push(endLineObj.subStation.slice(endStationsValue - 1,anotherIndex[i].staId).reverse());
+                        console.log(anotherHalfSingleLinePath);
+                        stationsNum = Math.abs(anotherIndex[i].staId - endStationsValue);
+
+                        console.log(stationsNum);
+                        
+                    }else{
+                        anotherHalfSingleLinePath.push(endLineObj.subStation.slice(anotherIndex[i].staId - 1,endStationsValue));
+                        console.log(anotherHalfSingleLinePath);
+                        stationsNum = Math.abs(anotherIndex[i].staId - endStationsValue);
+                        console.log(stationsNum);
+                    }
+                }
+                for(var i = 0; i < halfSingleLinePath.length; i ++) {
+                    findSingleLinePath = [];
+                    for(var j = 0; j < anotherHalfSingleLinePath.length; j ++) {
+                        if(i == j) {
+                            findSingleLinePath[i] = halfSingleLinePath[i].concat(anotherHalfSingleLinePath[j]);
+                        }
+                    }
+                }
+                console.log(findSingleLinePath);
+                // consoleShortPath(findSingleLinePath,stationsNum);
+                consoleSingleShortPath(findSingleLinePath,stationsNum,endLineValue)
+                function consoleSingleShortPath(findSingleLinePath,stationsNum,endLineValue){  
+                    var path = document.getElementById('path');
+                    for(var i = 0; i < findSingleLinePath.length; i++){
+                        var html = "<div class='list card'>";
+                        html += "<div class='item item-avatar'>";
+                        html += "<img src='../img/subway.png'>";
+                        html += "<h2 style='font-family:'Microsoft YaHei Light UI'>乘坐" + startLineValue + "号线</h2>";
+                        html += "<p>共" + (findSingleLinePath[i].length - 1) + "站，从左边车门下车，下车请注意安全。</p>";
+                        html += "</div>";
+                        html += "<div class='item item-body'>";
+                        html += "<ul class='list'>";
+                        var li = "";
+                        for (var x = 0; x < findSingleLinePath[i].length; x++) {
+                            if (x == findSingleLinePath.length - 1) {
+                                console.log(findSingleLinePath[i][x].staName);
+                                li += "<li class='item item-icon-left'><i class='icon ion-android-subway'></i>" + findSingleLinePath[i][x].staName + "</li>";
+                            } else {
+                                if (findSingleLinePath[i][x-1].staName == findSingleLinePath[i][x].staName) {
+                                    li += "<li class='item item-icon-left'><i class='icon ion-ios-loop-strong'></i>在" + findSingleLinePath[i][x].staName + "换乘" + endLineValue + "号线</li>";
+                                } else {
+                                    li += "<li class='item item-icon-left'><i class='icon ion-android-subway'></i>" + findSingleLinePath[i][x].staName + "-></li>";
+                                }
+
+                            }
+                        }
+                        html += li + "</ul><p><a class='subdued'>车站信息：ATM，共三个出入口，附近有如家、7天多家连锁酒店</a></p></div></div>";
+                    }
+                    path.innerHTML = html;
+                }
+
+            }
         }
-        $scope.modal.show();
+
+
+        
 
         var dataStart = [], //查找到所有包含初始站线路的存放数组
             dataEnd = []; //查找到所有包含终点站线路的存放数组
@@ -222,12 +386,13 @@ angular.module('starter.controllers', [])
             // console.log(finalPaths);
         }
 
-
-        if (shortPath.length) {
-            consoleShortPath(shortPath, pathInLine);
-        } else {
-            findFinalPath(finalPaths);
-            consoleFinalPaths(finalPaths);
+        if(!startLineValue || !endLineValue) {
+            if (shortPath.length) {
+                consoleShortPath(shortPath, pathInLine);
+            } else {
+                findFinalPath(finalPaths);
+                consoleFinalPaths(finalPaths);
+            }
         }
 
         function consoleFinalPaths(finalPaths) {

@@ -55,24 +55,24 @@ angular.module('starter.services', [])
   var chats = [{
     id: 0,
     name : 'Stationmaster',
-    headPortrait : 'img/subway.png',
+    headPortrait : 'https://beacelee.com/upload/images/subway.png',
     msgText : '地铁新消息0',
     msgTextEn: 'The News 0',
-    msgImg : 'img/adam.jpg'
+    msgImg : '头像'
   },{
     id: 1,
     name : 'Stationmaster',
-    headPortrait : 'img/subway.png',
+    headPortrait : 'https://beacelee.com/upload/images/subway.png',
     msgText : '地铁新消息1',
      msgTextEn: 'The News 1',
-    msgImg : 'img/ben.png'
+    msgImg : '头像'
   },{
     id: 2,
     name : 'Stationmaster',
-    headPortrait : 'img/subway.png',
+    headPortrait : 'https://beacelee.com/upload/images/subway.png',
     msgText : '地铁新消息2',
     msgTextEn: 'The News 2',
-    msgImg : 'img/perry.png'
+    msgImg : '头像'
   }];
 
   return {
